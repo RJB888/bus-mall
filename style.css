@@ -1,0 +1,14 @@
+
+
+
+img {
+  
+  width: 300px;
+  height: 300px;
+  border: thin solid black;
+  overflow: hidden;
+}
+.imagebox {
+  width: 100%;
+  text-align: center;
+}
