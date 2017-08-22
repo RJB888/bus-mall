@@ -7,7 +7,6 @@ function Product(name, photoId, photoSrc) {
   this.name = name;
   this.id = photoId;
   this.imgSource = photoSrc;
-  // this.hasBeenDisplayed = 0;
   this.timesShown = 0;
   this.timesClicked = 0;
 }
