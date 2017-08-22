@@ -37,26 +37,28 @@ var oldJail = [];
 var jail = [];
 
 function imageSwap(){
-  for (var i = 1; i < 4; i++){
+  for (var i = 0; i < 3; i++){
     var newIndex = Math.floor(Math.random() * products.length);
     while (jail.includes(newIndex) || oldJail.includes(newIndex)) {
       newIndex = Math.floor(Math.random() * products.length);
     }
     var image = document.getElementById('slot' + i);
     image.src = products[newIndex].imgSource;
-    jail.push(newIndex);
     products[newIndex].timesShown ++;
+    jail.push(newIndex);
   }
-  products[jail[clickedId - 1]].timesClicked ++;
-
+  console.log(jail);
   oldJail = jail;
   console.log(oldJail);
   jail = [];
+  console.log('Clicked Index' + products[oldJail[clickedId]].timesClicked);
+  products[oldJail[clickedId]].timesClicked ++;
+
 }
 
-var image1 = document.getElementById('slot1');
-var image2 = document.getElementById('slot2');
-var image3 = document.getElementById('slot3');
+var image1 = document.getElementById('slot0');
+var image2 = document.getElementById('slot1');
+var image3 = document.getElementById('slot2');
 
 image1.addEventListener('click',getClickedId);
 image2.addEventListener('click',getClickedId);
