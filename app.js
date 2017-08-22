@@ -1,7 +1,13 @@
 'use strict';
 
+var products = [];
+var totalClicks = 0;
+var clickedId;
+var priorPics = [];
+var currentPics = [];
 
 //Constructor function for image object
+
 function Product(name, photoId, photoSrc) {
 
   this.name = name;
@@ -11,48 +17,35 @@ function Product(name, photoId, photoSrc) {
   this.timesClicked = 0;
 }
 
-var bag = new Product('bag', 'bagpic', 'img/bag.jpg');
-var banana = new Product('banana', 'bananapic', 'img/banana.jpg');
-var bathroom = new Product('bathroom', 'bathroompic', 'img/bathroom.jpg');
-var boots = new Product('boots', 'bootspic', 'img/boots.jpg');
-var breakfast = new Product('bubblegum', 'bubblegumpic', 'img/bubblegum.jpg');
-var chair = new Product('chair', 'chairpic', 'img/chair.jpg');
-var cthulu = new Product('cthulu', 'cthulupic', 'img/cthulhu.jpg');
-var dogDuck = new Product('dogDuck', 'dogDuckpic', 'img/dog-duck.jpg');
-var dragon = new Product('dragon', 'dragonpic', 'img/dragon.jpg');
-var pen = new Product('pen', 'penpic', 'img/pen.jpg');
-var petSweep = new Product('petSweep', 'petSweeppic', 'img/pet-sweep.jpg');
-var scissors = new Product('scissors', 'scissorspic', 'img/scissors.jpg');
-var shark = new Product('shark', 'sharkpic', 'img/shark.jpg');
-var tauntaun = new Product('tauntaun', 'tauntaunpic', 'img/tauntaun.jpg');
-var unicorn = new Product('unicorn', 'unicornpic', 'img/unicorn.jpg');
-var usb = new Product('usb', 'usbpic', 'img/usb.gif');
-var waterCan = new Product('waterCan', 'waterCanpic', 'img/water-can.jpg');
-var wineGlass = new Product('wineGlass', 'wineGlasspic', 'img/wine-glass.jpg');
+var prodNames = ['bag', 'banana', 'bathroom','boots','breakfast', 'bubblegum','chair','cthulu','dogDuck','dragon','pen','petSweep','scissors','shark','tauntaun','unicorn','usb','waterCan','wineGlass',];
 
-var products = [bag, banana, bathroom, boots, breakfast, chair, cthulu, dogDuck, dragon, pen, petSweep, scissors, shark, tauntaun, unicorn, usb, waterCan, wineGlass];
-var totalClicks = 0;
-var clickedId;
-var oldJail = [];
-var jail = [];
+var photoId = ['bagpic','bananapic','bathroompic', 'bootspic','breakfastpic','bubblegumpic','chairpic', 'cthulupic','dogDuckpic', 'dragonpic','penpic','petSweeppic','scissorspic','sharkpic','tauntaunpic','unicornpic','usbpic', 'waterCanpic','wineGlasspic',];
+
+var imageSource = ['img/bag.jpg','img/banana.jpg','img/bathroom.jpg','img/boots.jpg', 'img/breakfast.jpg','img/bubblegum.jpg','img/chair.jpg', 'img/cthulhu.jpg', 'img/dog-duck.jpg', 'img/dragon.jpg', 'img/pen.jpg', 'img/pet-sweep.jpg', 'img/scissors.jpg', 'img/shark.jpg', 'img/tauntaun.jpg', 'img/unicorn.jpg', 'img/usb.gif', 'img/water-can.jpg', 'img/wine-glass.jpg'];
+
+for (var i = 0; i < prodNames.length; i++){
+  var newItem = new Product(prodNames[i], photoId[i], imageSource[i]);
+  products.push(newItem);
+}
 
 function imageSwap(){
   for (var i = 0; i < 3; i++){
     var newIndex = Math.floor(Math.random() * products.length);
-    while (jail.includes(newIndex) || oldJail.includes(newIndex)) {
+    while (currentPics.includes(newIndex) || priorPics.includes(newIndex)) {
       newIndex = Math.floor(Math.random() * products.length);
     }
+    currentPics.push(newIndex);
     var image = document.getElementById('slot' + i);
     image.src = products[newIndex].imgSource;
+    image.id = products[newIndex].id;
     products[newIndex].timesShown ++;
-    jail.push(newIndex);
   }
-  console.log(jail);
-  oldJail = jail;
-  console.log(oldJail);
-  jail = [];
-  console.log('Clicked Index' + products[oldJail[clickedId]].timesClicked);
-  products[oldJail[clickedId]].timesClicked ++;
+  console.log(currentPics);
+  priorPics = currentPics;
+  console.log(priorPics);
+  currentPics = [];
+  console.log('Clicked Index' + products[priorPics[clickedId]].timesClicked);
+  products[priorPics[clickedId]].timesClicked ++;
 
 }
 
@@ -70,24 +63,27 @@ function getClickedId(potato) {
   console.log('Yep, it was clicked');
   console.log(clickedId);
   totalClicks ++;
-  if (totalClicks <= 25){
+  if (totalClicks < 25){
+    for (var x = 0; x < products.length; x ++){
+      if (true);
+    }
     imageSwap();
   }
   else {
-    image1.removeEventListener('click',getClickedId);
-    image2.removeEventListener('click',getClickedId);
+    image1.removeEventListener('click', getClickedId);
+    image2.removeEventListener('click', getClickedId);
     image3.removeEventListener('click', getClickedId);
     console.log('Done clicking');
     report();
   }
 }
-
-function report() {
-  for (var x = 0; x < products.length; x ++){
-    document.write(products[x].name + '<br>');
-    document.write('Shown: ' + products[x].timesShown + '<br>');
-    document.write('Clicked: ' + products[x].timesClicked + '<br>');
-    document.write('<br>');
-    document.write('<br>');
-  }
-}
+imageSwap();
+// function report() {
+//   for (var x = 0; x < products.length; x ++){
+//     document.write(products[x].name + '<br>');
+//     document.write('Shown: ' + products[x].timesShown + '<br>');
+//     document.write('Clicked: ' + products[x].timesClicked + '<br>');
+//     document.write('<br>');
+//     document.write('<br>');
+//   }
+// }
