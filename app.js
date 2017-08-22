@@ -7,7 +7,7 @@ function Product(name, photoId, photoSrc) {
   this.name = name;
   this.id = photoId;
   this.imgSource = photoSrc;
-  this.hasBeenDisplayed = 0;
+  // this.hasBeenDisplayed = 0;
   this.timesShown = 0;
   this.timesClicked = 0;
 }
@@ -32,38 +32,61 @@ var waterCan = new Product('waterCan', 'waterCanpic', 'img/water-can.jpg');
 var wineGlass = new Product('wineGlass', 'wineGlasspic', 'img/wine-glass.jpg');
 
 var products = [bag, banana, bathroom, boots, breakfast, chair, cthulu, dogDuck, dragon, pen, petSweep, scissors, shark, tauntaun, unicorn, usb, waterCan, wineGlass];
-
-//randomize photos
-var oldJail = ['','',''];
-var jail = ['', '',''];
+var totalClicks = 0;
+var clickedId;
+var oldJail = [];
+var jail = [];
 
 function imageSwap(){
-  // console.log('im going');
-
   for (var i = 1; i < 4; i++){
     var newIndex = Math.floor(Math.random() * products.length);
-    // console.log(newIndex);
     while (jail.includes(newIndex) || oldJail.includes(newIndex)) {
       newIndex = Math.floor(Math.random() * products.length);
     }
-    // debugger;
     var image = document.getElementById('slot' + i);
     image.src = products[newIndex].imgSource;
-    // jail[i] = newIndex;
     jail.push(newIndex);
-    // products[newIndex].hasBeenDisplayed = true;
+    products[newIndex].timesShown ++;
   }
-  // console.log('done');
+  products[jail[clickedId - 1]].timesClicked ++;
+
   oldJail = jail;
   console.log(oldJail);
   jail = [];
 }
 
-window.setInterval(imageSwap, 1000);
-//event listener and handler for clicking on photos. (one for each photo?)
+var image1 = document.getElementById('slot1');
+var image2 = document.getElementById('slot2');
+var image3 = document.getElementById('slot3');
 
-// swaps numbered image with given product number image
-// function imageSwap(imgNum, prodNum) {
-//   var image = document.getElementById('image' + imgNum);
-//   image.src = products[prodNum].imgSource;
-// }
+image1.addEventListener('click',getClickedId);
+image2.addEventListener('click',getClickedId);
+image3.addEventListener('click', getClickedId);
+
+function getClickedId(potato) {
+  var locatedElement = potato.srcElement.id;
+  clickedId = parseInt(locatedElement.charAt(locatedElement.length - 1));
+  console.log('Yep, it was clicked');
+  console.log(clickedId);
+  totalClicks ++;
+  if (totalClicks <= 25){
+    imageSwap();
+  }
+  else {
+    image1.removeEventListener('click',getClickedId);
+    image2.removeEventListener('click',getClickedId);
+    image3.removeEventListener('click', getClickedId);
+    console.log('Done clicking');
+    report();
+  }
+}
+
+function report() {
+  for (var x = 0; x < products.length; x ++){
+    document.write(products[x].name + '<br>');
+    document.write('Shown: ' + products[x].timesShown + '<br>');
+    document.write('Clicked: ' + products[x].timesClicked + '<br>');
+    document.write('<br>');
+    document.write('<br>');
+  }
+}
