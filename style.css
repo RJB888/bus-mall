@@ -1,5 +1,10 @@
 
-
+h1 {
+  background-image: url("img/BusMaulTransp.png");
+  background-position: bottom center;
+  background-repeat: no-repeat;
+  height: 300px;
+}
 
 #slot0, #slot1, #slot2{
 
