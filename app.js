@@ -9,14 +9,13 @@ var totalClicks = 0;
 var clickedId;
 var priorPics = [];
 var currentPics = [];
-var numSelectionsAllowed = 25;
+var numSelectionsAllowed = 5;
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 
 //Constructor function for image object
 
 function Product(name, photoId, photoSrc) {
-
   this.name = name;
   this.id = photoId;
   this.imgSource = photoSrc;
@@ -43,16 +42,12 @@ function imageSwap(){
     }
     currentPics.push(newIndex);
     var image = document.getElementById('slot' + i);
-    console.log(i);
-    console.log(image);
-    console.log(image.src);
     image.src = products[newIndex].imgSource;
     image.name = products[newIndex].name;
+    image.setAttribute('index', newIndex);
     products[newIndex].timesShown ++;
   }
-  // console.log(currentPics);
   priorPics = currentPics;
-  console.log(priorPics);
   currentPics = [];
 
 }
@@ -66,21 +61,16 @@ image1.addEventListener('click',voteForPic);
 image2.addEventListener('click',voteForPic);
 image3.addEventListener('click', voteForPic);
 
-function voteForPic(potato) {
-  var locatedElement = potato.target.attributes.name.value;
-  //clickedId = parseInt(locatedElement.charAt(locatedElement.length - 1));
+function voteForPic(event) {
+  totalClicks ++;
   console.log('Yep, it was clicked');
   console.log('Total clicks: ' + totalClicks);
   if (totalClicks < numSelectionsAllowed){
-    for (var x = 0; x < products.length; x++){
-      if (products[x].name === locatedElement){
-        products[x].timesClicked++;
-      }
-    }
-    totalClicks ++;
+    products[event.target.attributes.index.value].timesClicked++;
     imageSwap();
   }
   else {
+    products[event.target.attributes.index.value].timesClicked++;
     image1.removeEventListener('click', voteForPic);
     image2.removeEventListener('click', voteForPic);
     image3.removeEventListener('click', voteForPic);
@@ -89,8 +79,6 @@ function voteForPic(potato) {
     doTheChart();
   }
 }
-
-/// TIme for some Chart JS!!\
 
 function getChartData() {
   productAvgTimesClicked = [];
@@ -124,7 +112,15 @@ function doTheChart(){
           'rgba(255, 206, 86, 0.2)',
           'rgba(75, 192, 192, 0.2)',
           'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(12, 232, 224, 0.2)',
+          'rgba(255, 50, 0, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(12, 232, 224, 0.2)',
         ],
         borderColor: [
           'rgba(255,99,132,1)',
@@ -132,7 +128,15 @@ function doTheChart(){
           'rgba(255, 206, 86, 1)',
           'rgba(75, 192, 192, 1)',
           'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
+          'rgba(255, 159, 64, 1)',
+          'rgba(12, 232, 224, 1)',
+          'rgba(255, 50, 0, 0.2)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(12, 232, 224, 1)',
         ],
         borderWidth: 1
       },
@@ -145,7 +149,15 @@ function doTheChart(){
           'rgba(255, 206, 86, 0.2)',
           'rgba(75, 192, 192, 0.2)',
           'rgba(153, 102, 255, 0.2)',
-          'rgba(255, 159, 64, 0.2)'
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(12, 232, 224, 0.2)',
+          'rgba(255, 50, 0, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(12, 232, 224, 0.2)',
         ],
         borderColor: [
           'rgba(255,99,132,1)',
@@ -153,7 +165,15 @@ function doTheChart(){
           'rgba(255, 206, 86, 1)',
           'rgba(75, 192, 192, 1)',
           'rgba(153, 102, 255, 1)',
-          'rgba(255, 159, 64, 1)'
+          'rgba(255, 159, 64, 1)',
+          'rgba(12, 232, 224, 1)',
+          'rgba(255, 50, 0, 0.2)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(12, 232, 224, 1)',
         ],
         borderWidth: 1
       }]
