@@ -11,8 +11,6 @@ var priorPics = [];
 var currentPics = [];
 var totalTimesShown = [];
 var totalTimesClicked = [];
-/*var storedTotalTimesShown = [];
-var StoredTotalTimesClicked = [];*/
 var storageProducts = [];
 var numSelectionsAllowed = 5;
 var canvas = document.getElementById('canvas');
@@ -87,26 +85,7 @@ function voteForPic(event) {
     doTheChart();
   }
 }
-/*function storeTotals() {
-  if (localStorage.getItem(storedTotalTimesShown)) {
-    storedTotalTimesShown = JSON.parse(localStorage.getItem('storedTotalTimesShown'));
-    for (var i = 0; i < products.length; i++){
-      storedTotalTimesShown[i] += totalTimesShown[i];
-    }
-  } else{
-    storedTotalTimesShown = totalTimesShown;
-  }
-  if (localStorage.getItem(storedTotalTimesClicked)) {
-    storedTotalTimesClicked = JSON.parse(localStorage.getItem('storedTotalTimesClicked'));
-    for (var i = 0; i < products.length; i++){
-      storedTotalTimesClicked[i] += totalTimesClicked[i];
-    }
-  }else{
-    storedTotalTimesClicked = totalTimesClicked;
-  }
-  localStorage.setItem('storedTotalTimesShown', JSON.stringify(storedTotalTimesShown));
-  localStorage.setItem('storedTotalTimesClicked', JSON.stringify(storedTotalTimesClicked));
-};*/
+
 function getChartData() {
   productAvgTimesClicked = [];
   productsSelected = [];
