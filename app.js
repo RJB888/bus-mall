@@ -5,6 +5,7 @@ var totalClicks = 0;
 var clickedId;
 var priorPics = [];
 var currentPics = [];
+var numSelectionsAllowed = 5;
 
 //Constructor function for image object
 
@@ -36,16 +37,20 @@ function imageSwap(){
     }
     currentPics.push(newIndex);
     var image = document.getElementById('slot' + i);
+    console.log(i);
+    console.log(image);
+    console.log(image.src);
     image.src = products[newIndex].imgSource;
-    image.id = products[newIndex].id;
+    image.name = products[newIndex].name;
     products[newIndex].timesShown ++;
   }
-  console.log(currentPics);
+  // console.log(currentPics);
   priorPics = currentPics;
   console.log(priorPics);
   currentPics = [];
-  console.log('Clicked Index' + products[priorPics[clickedId]].timesClicked);
-  products[priorPics[clickedId]].timesClicked ++;
+
+//see if image was posted before
+
 
 }
 
@@ -53,26 +58,28 @@ var image1 = document.getElementById('slot0');
 var image2 = document.getElementById('slot1');
 var image3 = document.getElementById('slot2');
 
-image1.addEventListener('click',getClickedId);
-image2.addEventListener('click',getClickedId);
-image3.addEventListener('click', getClickedId);
+image1.addEventListener('click',voteForPic);
+image2.addEventListener('click',voteForPic);
+image3.addEventListener('click', voteForPic);
 
-function getClickedId(potato) {
-  var locatedElement = potato.srcElement.id;
-  clickedId = parseInt(locatedElement.charAt(locatedElement.length - 1));
+function voteForPic(potato) {
+  var locatedElement = potato.target.attributes.name.value;
+  //clickedId = parseInt(locatedElement.charAt(locatedElement.length - 1));
   console.log('Yep, it was clicked');
-  console.log(clickedId);
-  totalClicks ++;
-  if (totalClicks < 25){
-    for (var x = 0; x < products.length; x ++){
-      if (true);
+  console.log('Total clicks: ' + totalClicks);
+  if (totalClicks < numSelectionsAllowed){
+    for (var x = 0; x < products.length; x++){
+      if (products[x].name === locatedElement){
+        products[x].timesClicked++;
+      }
     }
+    totalClicks ++;
     imageSwap();
   }
   else {
-    image1.removeEventListener('click', getClickedId);
-    image2.removeEventListener('click', getClickedId);
-    image3.removeEventListener('click', getClickedId);
+    image1.removeEventListener('click', voteForPic);
+    image2.removeEventListener('click', voteForPic);
+    image3.removeEventListener('click', voteForPic);
     console.log('Done clicking');
     report();
   }
