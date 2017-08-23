@@ -1,7 +1,20 @@
 'use strict';
 
+var products = [];
+var productAvgTimesClicked = [];
+var productsSelected = [];
+var productsShown = [];
+var productsNotShown = [];
+var totalClicks = 0;
+var clickedId;
+var priorPics = [];
+var currentPics = [];
+var numSelectionsAllowed = 5;
+var canvas = document.getElementById('canvas');
+var ctx = canvas.getContext('2d');
 
 //Constructor function for image object
+
 function Product(name, photoId, photoSrc) {
 
   this.name = name;
@@ -11,81 +24,155 @@ function Product(name, photoId, photoSrc) {
   this.timesClicked = 0;
 }
 
-var bag = new Product('bag', 'bagpic', 'img/bag.jpg');
-var banana = new Product('banana', 'bananapic', 'img/banana.jpg');
-var bathroom = new Product('bathroom', 'bathroompic', 'img/bathroom.jpg');
-var boots = new Product('boots', 'bootspic', 'img/boots.jpg');
-var breakfast = new Product('bubblegum', 'bubblegumpic', 'img/bubblegum.jpg');
-var chair = new Product('chair', 'chairpic', 'img/chair.jpg');
-var cthulu = new Product('cthulu', 'cthulupic', 'img/cthulhu.jpg');
-var dogDuck = new Product('dogDuck', 'dogDuckpic', 'img/dog-duck.jpg');
-var dragon = new Product('dragon', 'dragonpic', 'img/dragon.jpg');
-var pen = new Product('pen', 'penpic', 'img/pen.jpg');
-var petSweep = new Product('petSweep', 'petSweeppic', 'img/pet-sweep.jpg');
-var scissors = new Product('scissors', 'scissorspic', 'img/scissors.jpg');
-var shark = new Product('shark', 'sharkpic', 'img/shark.jpg');
-var tauntaun = new Product('tauntaun', 'tauntaunpic', 'img/tauntaun.jpg');
-var unicorn = new Product('unicorn', 'unicornpic', 'img/unicorn.jpg');
-var usb = new Product('usb', 'usbpic', 'img/usb.gif');
-var waterCan = new Product('waterCan', 'waterCanpic', 'img/water-can.jpg');
-var wineGlass = new Product('wineGlass', 'wineGlasspic', 'img/wine-glass.jpg');
+var prodNames = ['bag', 'banana', 'bathroom','boots','breakfast', 'bubblegum','chair','cthulu','dogDuck','dragon','pen','petSweep','scissors','shark','tauntaun','unicorn','usb','waterCan','wineGlass',];
 
-var products = [bag, banana, bathroom, boots, breakfast, chair, cthulu, dogDuck, dragon, pen, petSweep, scissors, shark, tauntaun, unicorn, usb, waterCan, wineGlass];
-var totalClicks = 0;
-var clickedId;
-var oldJail = [];
-var jail = [];
+var photoId = ['bagpic','bananapic','bathroompic', 'bootspic','breakfastpic','bubblegumpic','chairpic', 'cthulupic','dogDuckpic', 'dragonpic','penpic','petSweeppic','scissorspic','sharkpic','tauntaunpic','unicornpic','usbpic', 'waterCanpic','wineGlasspic',];
 
-function imageSwap(){
-  for (var i = 1; i < 4; i++){
-    var newIndex = Math.floor(Math.random() * products.length);
-    while (jail.includes(newIndex) || oldJail.includes(newIndex)) {
-      newIndex = Math.floor(Math.random() * products.length);
-    }
-    var image = document.getElementById('slot' + i);
-    image.src = products[newIndex].imgSource;
-    jail.push(newIndex);
-    products[newIndex].timesShown ++;
-  }
-  products[jail[clickedId - 1]].timesClicked ++;
+var imageSource = ['img/bag.jpg','img/banana.jpg','img/bathroom.jpg','img/boots.jpg', 'img/breakfast.jpg','img/bubblegum.jpg','img/chair.jpg', 'img/cthulhu.jpg', 'img/dog-duck.jpg', 'img/dragon.jpg', 'img/pen.jpg', 'img/pet-sweep.jpg', 'img/scissors.jpg', 'img/shark.jpg', 'img/tauntaun.jpg', 'img/unicorn.jpg', 'img/usb.gif', 'img/water-can.jpg', 'img/wine-glass.jpg'];
 
-  oldJail = jail;
-  console.log(oldJail);
-  jail = [];
+for (var i = 0; i < prodNames.length; i++){
+  var newItem = new Product(prodNames[i], photoId[i], imageSource[i]);
+  products.push(newItem);
 }
 
-var image1 = document.getElementById('slot1');
-var image2 = document.getElementById('slot2');
-var image3 = document.getElementById('slot3');
+function imageSwap(){
+  for (var i = 0; i < 3; i++){
+    var newIndex = Math.floor(Math.random() * products.length);
+    while (currentPics.includes(newIndex) || priorPics.includes(newIndex)) {
+      newIndex = Math.floor(Math.random() * products.length);
+    }
+    currentPics.push(newIndex);
+    var image = document.getElementById('slot' + i);
+    console.log(i);
+    console.log(image);
+    console.log(image.src);
+    image.src = products[newIndex].imgSource;
+    image.name = products[newIndex].name;
+    products[newIndex].timesShown ++;
+  }
+  // console.log(currentPics);
+  priorPics = currentPics;
+  console.log(priorPics);
+  currentPics = [];
 
-image1.addEventListener('click',getClickedId);
-image2.addEventListener('click',getClickedId);
-image3.addEventListener('click', getClickedId);
+}
+imageSwap();
 
-function getClickedId(potato) {
-  var locatedElement = potato.srcElement.id;
-  clickedId = parseInt(locatedElement.charAt(locatedElement.length - 1));
+var image1 = document.getElementById('slot0');
+var image2 = document.getElementById('slot1');
+var image3 = document.getElementById('slot2');
+
+image1.addEventListener('click',voteForPic);
+image2.addEventListener('click',voteForPic);
+image3.addEventListener('click', voteForPic);
+
+function voteForPic(potato) {
+  var locatedElement = potato.target.attributes.name.value;
+  //clickedId = parseInt(locatedElement.charAt(locatedElement.length - 1));
   console.log('Yep, it was clicked');
-  console.log(clickedId);
-  totalClicks ++;
-  if (totalClicks <= 25){
+  console.log('Total clicks: ' + totalClicks);
+  if (totalClicks < numSelectionsAllowed){
+    for (var x = 0; x < products.length; x++){
+      if (products[x].name === locatedElement){
+        products[x].timesClicked++;
+      }
+    }
+    totalClicks ++;
     imageSwap();
   }
   else {
-    image1.removeEventListener('click',getClickedId);
-    image2.removeEventListener('click',getClickedId);
-    image3.removeEventListener('click', getClickedId);
+    image1.removeEventListener('click', voteForPic);
+    image2.removeEventListener('click', voteForPic);
+    image3.removeEventListener('click', voteForPic);
     console.log('Done clicking');
-    report();
+    getChartData();
+    doTheChart();
   }
 }
 
-function report() {
-  for (var x = 0; x < products.length; x ++){
-    document.write(products[x].name + '<br>');
-    document.write('Shown: ' + products[x].timesShown + '<br>');
-    document.write('Clicked: ' + products[x].timesClicked + '<br>');
-    document.write('<br>');
-    document.write('<br>');
+/// TIme for some Chart JS!!\
+
+function getChartData() {
+  productAvgTimesClicked = [];
+  productsSelected = [];
+  productsShown = [];
+  productsNotShown = [];
+  for (var i = 0; i < products.length; i++){
+    if (products[i].timesShown > 0){
+      productsShown.push(products[i]);
+      productAvgTimesClicked.push(products[i].timesClicked / products[i].timesShown);
+      productsSelected.push(products[i]);
+    }
+    else {
+      productsNotShown.push(products[i]);
+    }
   }
+}
+
+function doTheChart(){
+
+  var chartData =  {
+    type: 'bar',
+    data: {
+      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      datasets: [{
+        label: 'Times Selected',
+        data: [12, 19, 3, 5, 2, 3],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      },
+      {
+        label: 'Times Shown',
+        data: [12, 19, 3, 5, 2, 3],
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)'
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero:true
+          }
+        }]
+      }
+    }
+  };
+  for (var i = 0; i < productsSelected.length; i++){
+    chartData.data.labels[i] = productsSelected[i].name;
+    // debugger;
+    chartData.data.datasets[0].data[i] = productsSelected[i].timesClicked;
+    chartData.data.datasets[1].data[i] = productsSelected[i].timesShown;
+  }
+  var myChart = new Chart(ctx, chartData);
 }
