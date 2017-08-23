@@ -9,6 +9,11 @@ var totalClicks = 0;
 var clickedId;
 var priorPics = [];
 var currentPics = [];
+var totalTimesShown = [];
+var totalTimesClicked = [];
+/*var storedTotalTimesShown = [];
+var StoredTotalTimesClicked = [];*/
+var storageProducts = [];
 var numSelectionsAllowed = 5;
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
@@ -29,11 +34,14 @@ var photoId = ['bagpic','bananapic','bathroompic', 'bootspic','breakfastpic','bu
 
 var imageSource = ['img/bag.jpg','img/banana.jpg','img/bathroom.jpg','img/boots.jpg', 'img/breakfast.jpg','img/bubblegum.jpg','img/chair.jpg', 'img/cthulhu.jpg', 'img/dog-duck.jpg', 'img/dragon.jpg', 'img/pen.jpg', 'img/pet-sweep.jpg', 'img/scissors.jpg', 'img/shark.jpg', 'img/tauntaun.jpg', 'img/unicorn.jpg', 'img/usb.gif', 'img/water-can.jpg', 'img/wine-glass.jpg'];
 
-for (var i = 0; i < prodNames.length; i++){
-  var newItem = new Product(prodNames[i], photoId[i], imageSource[i]);
-  products.push(newItem);
-}
-
+if(localStorage.getItem('storedProducts')){
+  products = JSON.parse(localStorage.getItem('storedProducts'));
+} else{
+  for (var i = 0; i < prodNames.length; i++){
+    var newItem = new Product(prodNames[i], photoId[i], imageSource[i]);
+    products.push(newItem);
+  }
+};
 function imageSwap(){
   for (var i = 0; i < 3; i++){
     var newIndex = Math.floor(Math.random() * products.length);
@@ -79,13 +87,34 @@ function voteForPic(event) {
     doTheChart();
   }
 }
-
+/*function storeTotals() {
+  if (localStorage.getItem(storedTotalTimesShown)) {
+    storedTotalTimesShown = JSON.parse(localStorage.getItem('storedTotalTimesShown'));
+    for (var i = 0; i < products.length; i++){
+      storedTotalTimesShown[i] += totalTimesShown[i];
+    }
+  } else{
+    storedTotalTimesShown = totalTimesShown;
+  }
+  if (localStorage.getItem(storedTotalTimesClicked)) {
+    storedTotalTimesClicked = JSON.parse(localStorage.getItem('storedTotalTimesClicked'));
+    for (var i = 0; i < products.length; i++){
+      storedTotalTimesClicked[i] += totalTimesClicked[i];
+    }
+  }else{
+    storedTotalTimesClicked = totalTimesClicked;
+  }
+  localStorage.setItem('storedTotalTimesShown', JSON.stringify(storedTotalTimesShown));
+  localStorage.setItem('storedTotalTimesClicked', JSON.stringify(storedTotalTimesClicked));
+};*/
 function getChartData() {
   productAvgTimesClicked = [];
   productsSelected = [];
   productsShown = [];
   productsNotShown = [];
   for (var i = 0; i < products.length; i++){
+    totalTimesShown[i] = products[i].timesShown;
+    totalTimesClicked[i] = products[i].timesClicked;
     if (products[i].timesShown > 0){
       productsShown.push(products[i]);
       productAvgTimesClicked.push(products[i].timesClicked / products[i].timesShown);
@@ -95,6 +124,7 @@ function getChartData() {
       productsNotShown.push(products[i]);
     }
   }
+  localStorage.setItem('storedProducts', JSON.stringify(products));
 }
 
 function doTheChart(){
