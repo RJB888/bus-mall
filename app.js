@@ -9,7 +9,7 @@ var totalClicks = 0;
 var clickedId;
 var priorPics = [];
 var currentPics = [];
-var numSelectionsAllowed = 5;
+var numSelectionsAllowed = 25;
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 
