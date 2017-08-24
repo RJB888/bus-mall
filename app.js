@@ -9,12 +9,15 @@ var totalClicks = 0;
 var clickedId;
 var priorPics = [];
 var currentPics = [];
+var shownProductsNames = [];
 var totalTimesShown = [];
 var totalTimesClicked = [];
 var storageProducts = [];
 var numSelectionsAllowed = 5;
 var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
+var canvas2 = document.getElementById('pieGraph');
+var ctx2 = canvas2.getContext('2d');
 
 //Constructor function for image object
 
@@ -40,6 +43,7 @@ if(localStorage.getItem('storedProducts')){
     products.push(newItem);
   }
 };
+
 function imageSwap(){
   for (var i = 0; i < 3; i++){
     var newIndex = Math.floor(Math.random() * products.length);
@@ -69,8 +73,6 @@ image3.addEventListener('click', voteForPic);
 
 function voteForPic(event) {
   totalClicks ++;
-  console.log('Yep, it was clicked');
-  console.log('Total clicks: ' + totalClicks);
   if (totalClicks < numSelectionsAllowed){
     products[event.target.attributes.index.value].timesClicked++;
     imageSwap();
@@ -80,7 +82,6 @@ function voteForPic(event) {
     image1.removeEventListener('click', voteForPic);
     image2.removeEventListener('click', voteForPic);
     image3.removeEventListener('click', voteForPic);
-    console.log('Done clicking');
     getChartData();
     doTheChart();
   }
@@ -90,17 +91,15 @@ function getChartData() {
   productAvgTimesClicked = [];
   productsSelected = [];
   productsShown = [];
-  productsNotShown = [];
+  //shownProductsNames = [];
   for (var i = 0; i < products.length; i++){
     totalTimesShown[i] = products[i].timesShown;
     totalTimesClicked[i] = products[i].timesClicked;
+    productAvgTimesClicked.push((products[i].timesClicked / products[i].timesShown) * 100);
     if (products[i].timesShown > 0){
+      //shownProductsNames.push(products[i].name); // had to move this up here and use products instead of productsSelected otherwise it crashed with type "undefined" error
       productsShown.push(products[i]);
-      productAvgTimesClicked.push(products[i].timesClicked / products[i].timesShown);
       productsSelected.push(products[i]);
-    }
-    else {
-      productsNotShown.push(products[i]);
     }
   }
   localStorage.setItem('storedProducts', JSON.stringify(products));
@@ -109,12 +108,12 @@ function getChartData() {
 function doTheChart(){
 
   var chartData =  {
-    type: 'bar',
+    type: 'horizontalBar',
     data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      labels: prodNames,
       datasets: [{
         label: 'Times Selected',
-        data: [12, 19, 3, 5, 2, 3],
+        data: totalTimesClicked,
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
           'rgba(54, 162, 235, 0.2)',
@@ -151,7 +150,44 @@ function doTheChart(){
       },
       {
         label: 'Times Shown',
-        data: [12, 19, 3, 5, 2, 3],
+        data: productAvgTimesClicked,
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(12, 232, 224, 0.2)',
+          'rgba(255, 50, 0, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(255, 206, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(12, 232, 224, 0.2)',
+        ],
+        borderColor: [
+          'rgba(255,99,132,1)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(12, 232, 224, 1)',
+          'rgba(255, 50, 0, 0.2)',
+          'rgba(54, 162, 235, 1)',
+          'rgba(255, 206, 86, 1)',
+          'rgba(75, 192, 192, 1)',
+          'rgba(153, 102, 255, 1)',
+          'rgba(255, 159, 64, 1)',
+          'rgba(12, 232, 224, 1)',
+        ],
+        borderWidth: 1
+      },
+      {
+        label: 'Percent of Times Selected When Shown',
+        data: productAvgTimesClicked,
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
           'rgba(54, 162, 235, 0.2)',
@@ -197,11 +233,58 @@ function doTheChart(){
       }
     }
   };
-  for (var i = 0; i < productsSelected.length; i++){
-    chartData.data.labels[i] = productsSelected[i].name;
-    // debugger;
-    chartData.data.datasets[0].data[i] = productsSelected[i].timesClicked;
-    chartData.data.datasets[1].data[i] = productsSelected[i].timesShown;
-  }
   var myChart = new Chart(ctx, chartData);
+
+  // var chart2Data = {
+  //   type: 'pie',
+  //   data: {
+  //     labels: shownProductsNames,
+  //     datasets: [{
+  //       label: 'Percent of Times Selected When Shown',
+  //       data: productAvgTimesClicked,
+  //       backgroundColor: [
+  //         'rgba(255, 99, 132, 0.2)',
+  //         'rgba(54, 162, 235, 0.2)',
+  //         'rgba(255, 206, 86, 0.2)',
+  //         'rgba(75, 192, 192, 0.2)',
+  //         'rgba(153, 102, 255, 0.2)',
+  //         'rgba(255, 159, 64, 0.2)',
+  //         'rgba(12, 232, 224, 0.2)',
+  //         'rgba(255, 50, 0, 0.2)',
+  //         'rgba(54, 162, 235, 0.2)',
+  //         'rgba(255, 206, 86, 0.2)',
+  //         'rgba(75, 192, 192, 0.2)',
+  //         'rgba(153, 102, 255, 0.2)',
+  //         'rgba(255, 159, 64, 0.2)',
+  //         'rgba(12, 232, 224, 0.2)',
+  //       ],
+  //       borderColor: [
+  //         'rgba(255,99,132,1)',
+  //         'rgba(54, 162, 235, 1)',
+  //         'rgba(255, 206, 86, 1)',
+  //         'rgba(75, 192, 192, 1)',
+  //         'rgba(153, 102, 255, 1)',
+  //         'rgba(255, 159, 64, 1)',
+  //         'rgba(12, 232, 224, 1)',
+  //         'rgba(255, 50, 0, 0.2)',
+  //         'rgba(54, 162, 235, 1)',
+  //         'rgba(255, 206, 86, 1)',
+  //         'rgba(75, 192, 192, 1)',
+  //         'rgba(153, 102, 255, 1)',
+  //         'rgba(255, 159, 64, 1)',
+  //         'rgba(12, 232, 224, 1)',
+  //       ],
+  //       borderWidth: 1
+  //     }]},
+  //   options: {
+  //     scales: {
+  //       yAxes: [{
+  //         ticks: {
+  //           beginAtZero:true
+  //         }
+  //       }]
+  //     }
+  //   }
+  // };
+  // var myPieChart = new Chart(ctx, chart2Data);
 }
