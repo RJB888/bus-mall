@@ -33,6 +33,12 @@ h1 {
 
 .canvas-container {
   width: 100%;
+  float: left;
+  margin:auto;
   background-color: white;
 
+}
+
+.graphs {
+  overflow: scroll;
 }
