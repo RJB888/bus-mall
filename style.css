@@ -11,12 +11,20 @@ copy
 }
 
 h1 {
+
   font-family: 'Ravie';
   text-align: center;
   background-image: url("img/BusMaulTransp.png");
   background-position: bottom center;
   background-repeat: no-repeat;
   height: 300px;
+}
+
+p {
+  width: 50%;
+  font-size: 1.1em;
+  margin: auto;
+  padding-bottom: 20px;
 }
 
 #slot0, #slot1, #slot2{
@@ -34,5 +42,12 @@ h1 {
 .canvas-container {
   width: 100%;
   background-color: white;
+}
 
+#pie {
+  width: 50%;
+}
+
+#pieGraph {
+  height: 50%;
 }
